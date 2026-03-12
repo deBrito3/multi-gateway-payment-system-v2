@@ -13,7 +13,6 @@ API para gerenciamento de pagamentos multi-gateway com fallback automatico, aute
 
 ```bash
 git clone <repo-url>
-cd laravel
 
 # Copiar arquivo de ambiente
 cp .env.example .env
