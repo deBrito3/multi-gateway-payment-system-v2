@@ -2,6 +2,14 @@
 
 API para gerenciamento de pagamentos multi-gateway com fallback automatico, autenticacao JWT e controle de acesso baseado em roles.
 
+## Objetivo do Projeto
+
+O objetivo deste projeto e construir uma API de pagamentos capaz de processar transacoes atraves de multiplos gateways com fallback automatico por prioridade. O sistema permite que, caso um gateway esteja indisponivel ou rejeite a transacao, o proximo gateway ativo seja acionado de forma transparente, garantindo maior taxa de aprovacao e resiliencia no fluxo de cobranca. A API tambem gerencia usuarios com diferentes niveis de permissao, produtos com suporte a multiplos itens por compra, e reembolsos integrados ao gateway que processou a cobranca original.
+
+## Decisoes de Arquitetura
+
+O projeto segue Clean Architecture com separacao em camadas: Controllers magros delegam para Actions (Use Cases), que encapsulam a logica de negocio e podem ser reutilizados fora do contexto HTTP. O PaymentService orquestra os gateways usando o Strategy Pattern, onde cada gateway implementa um contrato (GatewayContract), permitindo adicionar novos gateways sem alterar codigo existente (Open/Closed Principle). API Resources foram adotados para controlar explicitamente quais campos sao expostos nas respostas JSON, evitando vazamento de dados sensiveis como hash de senha. O sistema de roles utiliza tabela relacional com pivot (N:N) ao inves de enum, permitindo que usuarios tenham multiplas permissoes e que novas roles sejam adicionadas sem alterar o schema do banco. Valores monetarios sao armazenados em centavos (integer) para evitar problemas de ponto flutuante, e o preco unitario e salvo como snapshot no momento da compra para garantir fidelidade historica. A autenticacao usa JWT stateless com Argon2id para hashing de senhas, e todo o fluxo de compra e envolvido em DB::transaction para garantir atomicidade.
+
 ## Requisitos
 
 - Docker e Docker Compose
