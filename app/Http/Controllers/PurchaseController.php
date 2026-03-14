@@ -13,7 +13,8 @@ class PurchaseController extends Controller
     public function store(StorePurchaseRequest $request, CreatePurchaseAction $action): JsonResponse
     {
         try {
-            $transaction = $action->execute($request->validated());
+            $idempotencyKey = $request->header('Idempotency-Key');
+            $transaction = $action->execute($request->validated(), $idempotencyKey);
             $transaction->load(['client', 'gateway', 'products']);
 
             return (new PurchaseResource($transaction))->response()->setStatusCode(201);

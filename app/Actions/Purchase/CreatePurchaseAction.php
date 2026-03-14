@@ -18,9 +18,16 @@ class CreatePurchaseAction
         private PaymentServiceContract $paymentService,
     ) {}
 
-    public function execute(array $data): Transaction
+    public function execute(array $data, ?string $idempotencyKey = null): Transaction
     {
-        return DB::transaction(function () use ($data) {
+        if ($idempotencyKey) {
+            $existing = Transaction::where('idempotency_key', $idempotencyKey)->first();
+            if ($existing) {
+                return $existing->load('client', 'gateway', 'products');
+            }
+        }
+
+        return DB::transaction(function () use ($data, $idempotencyKey) {
             $client = Client::firstOrCreate(
                 ['email' => $data['client_email']],
                 ['name' => $data['client_name']]
@@ -48,6 +55,7 @@ class CreatePurchaseAction
                 'status' => 'pending',
                 'amount' => $totalAmount,
                 'card_last_numbers' => substr($data['card_number'], -4),
+                'idempotency_key' => $idempotencyKey,
             ]);
 
             foreach ($products as $p) {
