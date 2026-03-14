@@ -3,12 +3,12 @@
 namespace App\Actions\Client;
 
 use App\Models\Client;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class ListClientsAction
 {
-    public function execute(): Collection
+    public function execute(): LengthAwarePaginator
     {
-        return Client::all();
+        return Client::paginate(100);
     }
 }

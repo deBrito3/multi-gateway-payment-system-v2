@@ -3,12 +3,12 @@
 namespace App\Actions\Transaction;
 
 use App\Models\Transaction;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class ListTransactionsAction
 {
-    public function execute(): Collection
+    public function execute(): LengthAwarePaginator
     {
-        return Transaction::with('client', 'gateway', 'products')->get();
+        return Transaction::with('client', 'gateway', 'products')->paginate(100);
     }
 }

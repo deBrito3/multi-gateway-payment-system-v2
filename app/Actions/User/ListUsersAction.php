@@ -3,12 +3,12 @@
 namespace App\Actions\User;
 
 use App\Models\User;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class ListUsersAction
 {
-    public function execute(): Collection
+    public function execute(): LengthAwarePaginator
     {
-        return User::with('roles')->get();
+        return User::with('roles')->paginate(100);
     }
 }

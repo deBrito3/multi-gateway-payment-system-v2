@@ -3,12 +3,12 @@
 namespace App\Actions\Product;
 
 use App\Models\Product;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class ListProductsAction
 {
-    public function execute(): Collection
+    public function execute(): LengthAwarePaginator
     {
-        return Product::all();
+        return Product::paginate(100);
     }
 }
