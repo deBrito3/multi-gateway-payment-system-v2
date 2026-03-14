@@ -8,7 +8,7 @@ O objetivo deste projeto e construir uma API de pagamentos capaz de processar tr
 
 ## Decisoes de Arquitetura
 
-O projeto segue Clean Architecture com separacao em camadas: Controllers magros delegam para Actions (Use Cases), que encapsulam a logica de negocio e podem ser reutilizados fora do contexto HTTP. O PaymentService orquestra os gateways usando o Strategy Pattern, onde cada gateway implementa um contrato (GatewayContract), permitindo adicionar novos gateways sem alterar codigo existente (Open/Closed Principle). API Resources foram adotados para controlar explicitamente quais campos sao expostos nas respostas JSON, evitando vazamento de dados sensiveis como hash de senha. O sistema de roles utiliza tabela relacional com pivot (N:N) ao inves de enum, permitindo que usuarios tenham multiplas permissoes e que novas roles sejam adicionadas sem alterar o schema do banco. Valores monetarios sao armazenados em centavos (integer) para evitar problemas de ponto flutuante, e o preco unitario e salvo como snapshot no momento da compra para garantir fidelidade historica. A autenticacao usa JWT stateless com Argon2id para hashing de senhas, e todo o fluxo de compra e envolvido em DB::transaction para garantir atomicidade.
+O projeto segue Clean Architecture com separacao em camadas: Controllers magros delegam para Actions (Use Cases), que encapsulam a logica de negocio e podem ser reutilizados fora do contexto HTTP. O PaymentService orquestra os gateways usando o Strategy Pattern, onde cada gateway implementa um contrato (GatewayContract), permitindo adicionar novos gateways sem alterar codigo existente (Open/Closed Principle). API Resources foram adotados para controlar explicitamente quais campos sao expostos nas respostas JSON, evitando vazamento de dados sensiveis como hash de senha. O sistema de roles utiliza tabela relacional com pivot (N:N) ao inves de enum, permitindo que usuarios tenham multiplas permissoes e que novas roles sejam adicionadas sem alterar o schema do banco. Valores monetarios sao armazenados em centavos (integer) para evitar problemas de ponto flutuante, e o preco unitario e salvo como snapshot no momento da compra para garantir fidelidade historica. A autenticacao usa JWT stateless com Argon2id para hashing de senhas, e todo o fluxo de compra e envolvido em DB::transaction para garantir atomicidade. Todos os endpoints de listagem utilizam paginacao ao inves de carregar todos os registros em memoria, evitando problemas de performance com grandes volumes de dados. Os endpoints publicos de login e compra possuem rate limiting nativo do laravel para protecao contra brute force e abuso.
 
 ## Requisitos
 
@@ -57,9 +57,6 @@ docker run -p 3001:3001 -p 3002:3002 matheusprotzen/gateways-mock
 
 ```bash
 php artisan test
-
-# Ou com verbose
-php artisan test --verbose
 
 # Rodar grupo especifico
 php artisan test tests/Unit/
