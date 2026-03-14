@@ -10,8 +10,8 @@ use App\Http\Controllers\ClientController;
 use App\Http\Controllers\TransactionController;
 
 // Public routes
-Route::post('/auth/login', [AuthController::class, 'login']);
-Route::post('/purchases', [PurchaseController::class, 'store']);
+Route::middleware(['throttle:5,1'])->post('/auth/login', [AuthController::class, 'login']);
+Route::middleware(['throttle:10,1'])->post('/purchases', [PurchaseController::class, 'store']);
 
 // Private routes
 Route::middleware(['auth.jwt'])->group(function () {
