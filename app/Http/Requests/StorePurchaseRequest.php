@@ -17,7 +17,7 @@ class StorePurchaseRequest extends FormRequest
             'client_name' => ['required', 'string', 'max:255'],
             'client_email' => ['required', 'email'],
             'card_number' => ['required', 'string', 'size:16', 'regex:/^\d+$/'],
-            'cvv' => ['required', 'string', 'size:3', 'regex:/^\d+$/'],
+            'cvv' => ['required', 'string', 'digits_between:3,4'],
             'products' => ['required', 'array', 'min:1'],
             'products.*.product_id' => ['required', 'integer', 'exists:products,id'],
             'products.*.quantity' => ['required', 'integer', 'min:1'],
